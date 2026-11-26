@@ -1,0 +1,207 @@
+﻿
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>AA01 - Restablecer contraseña</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            margin: 0;
+            padding: 24px;
+        }
+
+        main {
+            max-width: 420px;
+            margin: 60px auto;
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px #0001;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            margin: 16px 0 6px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #185abc;
+            color: white;
+            border: 0;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+            button:disabled {
+                opacity: 0.6;
+                cursor: default;
+            }
+
+        #resultado {
+            margin-top: 18px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>Restablecer contraseña</h1>
+
+        <p>
+            Introduce tu nueva contraseña para la cuenta AA01.
+        </p>
+
+        <form id="formulario">
+            <label for="correo">Correo</label>
+            <input id="correo" type="email" readonly>
+
+            <label for="nueva">Nueva contraseña</label>
+            <input id="nueva"
+                   type="password"
+                   autocomplete="new-password"
+                   required
+                   minlength="8">
+
+            <label for="confirmar">
+                Confirmar nueva contraseña
+            </label>
+
+            <input id="confirmar"
+                   type="password"
+                   autocomplete="new-password"
+                   required
+                   minlength="8">
+
+            <button id="enviar" type="submit">
+                Restablecer contraseña
+            </button>
+        </form>
+
+        <p id="resultado" role="status" aria-live="polite"></p>
+    </main>
+
+    <script>const parametros =
+            new URLSearchParams(window.location.search);
+
+        const correo = parametros.get("correo");
+        const codigo = parametros.get("codigo");
+
+        const formulario =
+            document.getElementById("formulario");
+
+        const resultado =
+            document.getElementById("resultado");
+
+        const enviar =
+            document.getElementById("enviar");
+
+        // Quitar el codigo de la barra de direcciones
+        window.history.replaceState(
+            null,
+            "",
+            window.location.pathname
+        );
+
+        if (!correo || !codigo) {
+            formulario.hidden = true;
+
+            resultado.textContent =
+                "Enlace de recuperación incompleto. " +
+                "Solicita uno nuevo.";
+        }
+        else {
+            document.getElementById("correo").value = correo;
+        }
+
+        formulario.addEventListener(
+            "submit",
+            async function (evento) {
+                evento.preventDefault();
+
+                const nueva =
+                    document.getElementById("nueva").value;
+
+                const confirmar =
+                    document.getElementById("confirmar").value;
+
+                if (nueva !== confirmar) {
+                    resultado.textContent =
+                        "Las contraseñas nuevas no coinciden.";
+                    return;
+                }
+
+                enviar.disabled = true;
+
+                resultado.textContent =
+                    "Procesando solicitud...";
+
+                try {
+                    const respuesta = await fetch(
+                        "/api/Auth/restablecer-contrasena",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                correo: correo,
+                                codigo: codigo,
+                                nuevaContrasena: nueva,
+                                confirmarContrasena: confirmar
+                            })
+                        }
+                    );
+
+                    if (respuesta.ok) {
+                        resultado.textContent =
+                            "Contraseña restablecida correctamente. " +
+                            "Ya puedes iniciar sesión.";
+
+                        formulario.hidden = true;
+                    }
+                    else {
+                        resultado.textContent =
+                            "No se pudo restablecer la contraseña. " +
+                            "Comprueba los requisitos o solicita " +
+                            "un enlace nuevo.";
+
+                        enviar.disabled = false;
+                    }
+                }
+                catch (error) {
+                    resultado.textContent =
+                        "No se pudo conectar con Auth.Api. " +
+                        "Verifica que esté encendida.";
+
+                    enviar.disabled = false;
+                }
+            }
+        );</script>
+</body>
+</html>

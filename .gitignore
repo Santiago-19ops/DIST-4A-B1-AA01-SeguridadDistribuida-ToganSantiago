@@ -1,0 +1,15 @@
+﻿**/bin/
+**/obj/
+**/.vs/
+**/*.csproj.user
+**/*.suo
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/secrets.json
+**/.env
+**/.env.*
+**/*.pfx
+**/*.p12
+**/*.pem
+**/*.key
+03_Documentacion/AA01_Registro_Uso_IA_Prompts_y_Fuentes.pdf

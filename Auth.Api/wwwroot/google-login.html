@@ -1,0 +1,375 @@
+﻿
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>AA01 - Google Login</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 650px;
+            margin: 65px auto;
+            padding: 20px;
+        }
+
+        button, input {
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+        input {
+            width: 95%;
+            box-sizing: border-box;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            background: #eeeeee;
+            padding: 15px;
+        }
+
+        #cuentaActual {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        #botonGoogle {
+            margin-top: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>AA01 - Seguridad Distribuida</h2>
+
+    <p>Inicio de sesion con Google</p>
+
+    <p>
+        Haz clic en el icono de Google para elegir una cuenta.
+    </p>
+
+    <div id="botonGoogle"></div>
+
+    <button type="button" onclick="cambiarCuentaGoogle()">
+        Cambiar cuenta de Google
+    </button>
+
+    <p id="cuentaActual">
+        Ninguna cuenta verificada todavia.
+    </p>
+
+    <div id="vinculacion" hidden>
+        <h3>Vincular cuenta existente</h3>
+
+        <p>
+            Esta cuenta Google todavia no esta vinculada.
+            Si ya tienes una cuenta AA01 con el mismo correo,
+            primero inicia sesion en Auth.Api,
+            copia tu JWT y pegalo aqui.
+        </p>
+
+        <input id="jwt"
+               type="password"
+               placeholder="Pega aqui tu JWT de AA01">
+
+        <button type="button" onclick="vincularGoogle()">
+            Vincular mi cuenta con Google
+        </button>
+    </div>
+
+    <h3>Resultado</h3>
+
+    <pre id="resultado">Selecciona tu cuenta de Google.</pre>
+
+    <script>
+                // @ts-nocheck
+
+                let tokenGoogle = "";
+
+                // Mostrar los mensajes de la pagina
+                function mostrar(mensaje) {
+                    document.getElementById("resultado")
+                        .textContent = mensaje;
+                }
+
+                // Enviar peticiones a Auth.Api
+                async function enviar(url, datos, jwt = "") {
+                    const headers = {
+                        "Content-Type": "application/json"
+                    };
+
+                    if (jwt) {
+                        headers["Authorization"] = "Bearer " + jwt;
+                    }
+
+                    const respuesta = await fetch(url, {
+                        method: "POST",
+                        headers: headers,
+                        body: JSON.stringify(datos)
+                    });
+
+                    // Algunas respuestas son JSON y otras texto
+                    const texto = await respuesta.text();
+
+                    let resultado;
+
+                    try {
+                        resultado = JSON.parse(texto);
+                    } catch (error) {
+                        resultado = texto;
+                    }
+
+                    return {
+                        ok: respuesta.ok,
+                        estado: respuesta.status,
+                        datos: resultado
+                    };
+                }
+
+                // Leer el correo para mostrarlo en pantalla
+                // La validacion real se hace en Auth.Api
+                function obtenerCorreoGoogle(token) {
+                    try {
+                        const parte = token.split(".")[1]
+                            .replace(/-/g, "+")
+                            .replace(/_/g, "/");
+
+                        const datos = JSON.parse(atob(parte));
+
+                        return datos.email || "";
+                    } catch (error) {
+                        return "";
+                    }
+                }
+
+                // Iniciar sesion con Google
+                async function iniciarConGoogle(respuestaGoogle) {
+                    if (!respuestaGoogle ||
+                        !respuestaGoogle.credential) {
+
+                        mostrar("Google no devolvio un token.");
+                        return;
+                    }
+
+                    tokenGoogle = respuestaGoogle.credential;
+
+                    // Ocultar datos de la seleccion anterior
+                    document.getElementById("vinculacion")
+                        .hidden = true;
+
+                    document.getElementById("jwt").value = "";
+
+                    document.getElementById("cuentaActual")
+                        .textContent =
+                        "Verificando la cuenta seleccionada...";
+
+                    mostrar("Verificando cuenta con Auth.Api...");
+
+                    try {
+                        const respuesta = await enviar(
+                            "/api/Auth/google-login",
+                            { idToken: tokenGoogle }
+                        );
+
+                        if (respuesta.ok) {
+                            const correo =
+                                obtenerCorreoGoogle(tokenGoogle);
+
+                            document.getElementById("cuentaActual")
+                                .textContent =
+                                "Cuenta Google verificada: " + correo;
+
+                            mostrar(JSON.stringify(
+                                respuesta.datos, null, 2));
+
+                        } else if (respuesta.estado === 409) {
+                            const correo =
+                                obtenerCorreoGoogle(tokenGoogle);
+
+                            document.getElementById("cuentaActual")
+                                .textContent =
+                                "Cuenta Google verificada: " + correo;
+
+                            document.getElementById("vinculacion")
+                                .hidden = false;
+
+                            mostrar(
+                                "Google verifico esta cuenta, " +
+                                "pero todavia no esta vinculada con AA01."
+                            );
+
+                        } else {
+                            tokenGoogle = "";
+
+                            document.getElementById("cuentaActual")
+                                .textContent =
+                                "No se pudo verificar la cuenta.";
+
+                            mostrar(
+                                "Estado HTTP: " + respuesta.estado +
+                                "\n" +
+                                JSON.stringify(respuesta.datos, null, 2)
+                            );
+                        }
+
+                    } catch (error) {
+                        tokenGoogle = "";
+
+                        document.getElementById("cuentaActual")
+                            .textContent =
+                            "No se pudo verificar la cuenta.";
+
+                        mostrar(
+                            "Error de comunicacion con Auth.Api."
+                        );
+                    }
+                }
+
+                // Vincular Google con un usuario existente de AA01
+                async function vincularGoogle() {
+                    const jwt = document.getElementById("jwt")
+                        .value.trim();
+
+                    if (!jwt || !tokenGoogle) {
+                        mostrar(
+                            "Necesitas el JWT de AA01 y Google."
+                        );
+                        return;
+                    }
+
+                    try {
+                        const respuesta = await enviar(
+                            "/api/Auth/google-vincular",
+                            { idToken: tokenGoogle },
+                            jwt
+                        );
+
+                        if (!respuesta.ok) {
+                            mostrar(
+                                "Estado HTTP: " + respuesta.estado +
+                                "\n" +
+                                JSON.stringify(respuesta.datos, null, 2)
+                            );
+                            return;
+                        }
+
+                        mostrar("Cuenta vinculada correctamente.");
+
+                        document.getElementById("jwt").value = "";
+
+                        // Iniciar sesion tras vincular
+                        await iniciarConGoogle({
+                            credential: tokenGoogle
+                        });
+
+                    } catch (error) {
+                        mostrar(
+                            "No fue posible vincular Google."
+                        );
+                    }
+                }
+
+                // Limpiar la seleccion local para volver a elegir
+                function cambiarCuentaGoogle() {
+                    tokenGoogle = "";
+
+                    document.getElementById("jwt").value = "";
+
+                    document.getElementById("vinculacion")
+                        .hidden = true;
+
+                    document.getElementById("cuentaActual")
+                        .textContent =
+                        "Ninguna cuenta verificada todavia.";
+
+                    // Evitar seleccion automatica
+                    if (window.google && google.accounts &&
+                        google.accounts.id) {
+
+                        google.accounts.id.disableAutoSelect();
+                        google.accounts.id.cancel();
+
+                        // Volver a dibujar el icono oficial
+                        const contenedor =
+                            document.getElementById("botonGoogle");
+
+                        contenedor.replaceChildren();
+
+                        mostrarBotonGoogle();
+                    }
+
+                    mostrar(
+                        "Seleccion anterior limpiada.\n" +
+                        "Pulsa el icono de Google y elige " +
+                        "la cuenta que quieres utilizar."
+                    );
+                }
+
+                // Mostrar el boton oficial sin foto ni nombre
+                // de las cuentas guardadas en Chrome
+                function mostrarBotonGoogle() {
+                    google.accounts.id.renderButton(
+                        document.getElementById("botonGoogle"),
+                        {
+                            type: "icon",
+                            theme: "outline",
+                            shape: "circle",
+                            size: "large"
+                        }
+                    );
+                }
+
+                // Configurar Google cuando se cargue su biblioteca
+                async function iniciarGoogle() {
+                    try {
+                        const respuesta = await fetch(
+                            "/api/Auth/google-config"
+                        );
+
+                        if (!respuesta.ok) {
+                            throw new Error(
+                                "Falta Google:ClientId"
+                            );
+                        }
+
+                        const configuracion =
+                            await respuesta.json();
+
+                        google.accounts.id.initialize({
+                            client_id: configuracion.clientId,
+                            callback: iniciarConGoogle,
+
+                            // Evitar el inicio automatico
+                            auto_select: false,
+                            button_auto_select: false,
+                            use_fedcm_for_button: false
+                        });
+
+                        mostrarBotonGoogle();
+
+                        mostrar(
+                            "Selecciona tu cuenta de Google."
+                        );
+
+                    } catch (error) {
+                        mostrar(
+                            "No se pudo cargar Google Login."
+                        );
+
+                        console.error(error);
+                    }
+                }
+    </script>
+
+    <script src="https://accounts.google.com/gsi/client"
+            async
+            defer
+            onload="iniciarGoogle()"
+            onerror="mostrar('No se pudo cargar Google.')"></script>
+</body>
+</html>

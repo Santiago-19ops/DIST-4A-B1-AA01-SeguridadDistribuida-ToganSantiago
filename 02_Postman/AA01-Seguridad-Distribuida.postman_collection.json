@@ -1,0 +1,967 @@
+{
+  "info": {
+    "_postman_id": "8992d43c-1227-4246-b00e-0269bd236024",
+    "name": "AA01 - Seguridad Distribuida.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "60077336",
+    "_collection_link": "https://go.postman.co/collection/60077336-8992d43c-1227-4246-b00e-0269bd236024?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Autenticacion",
+      "item": [
+        {
+          "name": "Registro de usuario\tPOST",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"nombre\": \"Usuario Prueba AA01\",\r\n  \"correo\": \"usuario.prueba@example.com\",\r\n  \"contrasena\": \"{{contrasena_usuario}}\",\r\n  \"confirmarContrasena\": \"{{contrasena_usuario}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/registro",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "registro"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Inicio de sesión\tPOST",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"deber.correoitsco@gmail.com\",\n  \"contrasena\": \"{{contrasena_usuario}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/login",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar sesión\tGET",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/mi-sesion",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "mi-sesion"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Olvidé mi contraseña\tPOST",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"correo\": \"deber.correoitsco@gmail.com\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/olvide-contrasena",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "olvide-contrasena"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Restablecer contraseña\tPOST",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"correo\": \"deber.correoitsco@gmail.com\",\r\n  \"codigo\": \"{{token_recuperacion}}\",\r\n  \"nuevaContrasena\": \"{{contrasena_usuario}}\",\r\n  \"confirmarContrasena\": \"{{contrasena_usuario}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/restablecer-contrasena",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "restablecer-contrasena"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Perfiles y Permisos",
+      "item": [
+        {
+          "name": "GET Consultar mi perfil con Google",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:7025/api/Perfiles/mi-perfil",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7025",
+              "path": [
+                "api",
+                "Perfiles",
+                "mi-perfil"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Actualizar mi perfil",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Santiago Perfil Actualizado\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7025/api/Perfiles/mi-perfil",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7025",
+              "path": [
+                "api",
+                "Perfiles",
+                "mi-perfil"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Administrador consulta todos los perfiles",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:7025/api/Perfiles/todos",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7025",
+              "path": [
+                "api",
+                "Perfiles",
+                "todos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Cliente sin permiso para ver perfiles",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:7025/api/Perfiles/todos",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7025",
+              "path": [
+                "api",
+                "Perfiles",
+                "todos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Acceso sin token 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:7025/api/Perfiles/mi-perfil",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7025",
+              "path": [
+                "api",
+                "Perfiles",
+                "mi-perfil"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pruebas de Validacion",
+      "item": [
+        {
+          "name": "POST - 02 Registro duplicado",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"nombre\": \"Usuario Duplicado\",\r\n  \"correo\": \"deber.correoitsco@gmail.com\",\r\n  \"contrasena\": \"{{contrasena_usuario}}\",\r\n  \"confirmarContrasena\": \"{{contrasena_usuario}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/registro",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "registro"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - 02 Registro con datos invalidos",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"nombre\": \"Usuario Incorrecto\",\r\n  \"correo\": \"correo-invalido\",\r\n  \"contrasena\": \"PruebaSegura#2026\",\r\n  \"confirmarContrasena\": \"PruebaSegura#2026\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/registro",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "registro"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - 03 Login incorrecto",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"correo\": \"deber.correoitsco@gmail.com\",\r\n  \"contrasena\": \"ContrasenaIncorrecta#999\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/login",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - 03 Bloqueo por intentos fallidos",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"correo\": \"maria.cordillera@example.com\",\r\n  \"contrasena\": \"Incorrecta#9999\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/login",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - 08 Token de Google invalido",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"idToken\": \"token-falso-AA01\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/google-login",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "google-login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - 11 Token de recuperacion alterado",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"correo\": \"deber.correoitsco@gmail.com\",\r\n  \"codigo\": \"token-alterado-AA01\",\r\n  \"nuevaContrasena\": \"{{contrasena_usuario}}\",\r\n  \"confirmarContrasena\": \"{{contrasena_usuario}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/restablecer-contrasena",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "restablecer-contrasena"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - 12 Registro con Usuarios API apagada",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"nombre\": \"Prueba Servicio Apagado\",\r\n  \"correo\": \"prueba.caida.usuarios.251126@example.com\",\r\n  \"contrasena\": \"{{contrasena_usuario}}\",\r\n  \"confirmarContrasena\": \"{{contrasena_usuario}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/registro",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "registro"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - 13 Recuperacion con Notificaciones API apagada",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"correo\": \"deber.correoitsco@gmail.com\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/olvide-contrasena",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "olvide-contrasena"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - 14 Timeout entre microservicios",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"nombre\": \"Prueba Timeout\",\r\n  \"correo\": \"prueba.timeout.aa01@example.com\",\r\n  \"contrasena\": \"{{contrasena_usuario}}\",\r\n  \"confirmarContrasena\": \"{{contrasena_usuario}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/registro",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "registro"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - 15 Correo interno sin autorizacion",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"nombre\": \"Prueba Sin Autorizacion\",\r\n  \"correoDestino\": \"deber.correoitsco@gmail.com\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7124/api/Correos/interno/bienvenida",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7124",
+              "path": [
+                "api",
+                "Correos",
+                "interno",
+                "bienvenida"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - 16 Contraseña actual incorrecta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"contrasenaActual\": \"Incorrecta#9999\",\r\n  \"nuevaContrasena\": \"{{contrasena_usuario}}\",\r\n  \"confirmarContrasena\": \"{{contrasena_usuario}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Auth/cambiar-contrasena",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Auth",
+                "cambiar-contrasena"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Administración",
+      "item": [
+        {
+          "name": "GET - Administrador lista usuarios",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:7272/api/Administracion/usuarios",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Administracion",
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Administrador cambia rol",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"rol\": \"Administrador\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Administracion/usuarios/ecff5131-8af8-47d3-8cd8-fc30fcab700f/rol",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Administracion",
+                "usuarios",
+                "ecff5131-8af8-47d3-8cd8-fc30fcab700f",
+                "rol"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Restaurar rol Cliente",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"rol\": \"Cliente\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Administracion/usuarios/ecff5131-8af8-47d3-8cd8-fc30fcab700f/rol",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Administracion",
+                "usuarios",
+                "ecff5131-8af8-47d3-8cd8-fc30fcab700f",
+                "rol"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Deshabilitar cuenta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"habilitado\": false\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Administracion/usuarios/ecff5131-8af8-47d3-8cd8-fc30fcab700f/estado",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Administracion",
+                "usuarios",
+                "ecff5131-8af8-47d3-8cd8-fc30fcab700f",
+                "estado"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Habilitar cuenta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"habilitado\": true\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Administracion/usuarios/ecff5131-8af8-47d3-8cd8-fc30fcab700f/estado",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Administracion",
+                "usuarios",
+                "ecff5131-8af8-47d3-8cd8-fc30fcab700f",
+                "estado"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Proteger ultimo administrador",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_admin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"habilitado\": false\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7272/api/Administracion/usuarios/aaabb4db-5dd9-4a4c-9672-16630bfb83b3/estado",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Administracion",
+                "usuarios",
+                "aaabb4db-5dd9-4a4c-9672-16630bfb83b3",
+                "estado"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Cliente no puede administrar usuarios",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://localhost:7272/api/Administracion/usuarios",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7272",
+              "path": [
+                "api",
+                "Administracion",
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "jwt_cliente",
+      "value": ""
+    },
+    {
+      "key": "jwt_admin",
+      "value": ""
+    },
+    {
+      "key": "contrasena_usuario",
+      "value": ""
+    },
+    {
+      "key": "token_recuperacion",
+      "value": ""
+    }
+  ]
+}
