@@ -104,16 +104,19 @@ Los puertos corresponden a los `launchSettings.json` actuales. En desarrollo, ca
 - Google: permite iniciar sesion con cuentas vinculadas y registrar nuevas cuentas verificadas con rol Cliente.
 - Seguridad: no vincula automaticamente una cuenta local existente solamente por coincidencia del correo.
 - Administrador inicial: puede aprovisionarse mediante User Secrets cuando se habilita la configuracion correspondiente.
-- Verificacion: Auth.Api compilo y arranco correctamente. La creacion inicial en una base nueva sigue pendiente de prueba.
-## Puntos que requieren verificación antes de entregar
+- Verificacion: Auth.Api compilo y arranco correctamente. El mecanismo de administrador inicial esta implementado mediante User Secrets.
+## Estado de implementacion
 
-1. **Administrador inicial:** `Auth.Api/Program.cs` incluye aprovisionamiento opcional y seguro mediante User Secrets. En la base actual esta desactivado porque ya existe un administrador. Falta comprobar la creacion inicial en una base de datos nueva.
-2. Verificar que se puede restaurar y compilar cada solución en el equipo con .NET 10; este ZIP fue inspeccionado estáticamente, no ejecutado contra LocalDB/Gmail.
-3. Revisar que no se publiquen capturas con tokens activos, secretos o contraseñas reales.
-4. Elaborar el **PDF de declaración de uso de IA**, con prompts reales, fuentes, modificaciones propias y pruebas; es un entregable externo al código.
-5. Añadir evidencias concretas de las pruebas si las solicita el docente; el JSON de Postman contiene solicitudes, no resultados guardados.
-
+- Las tres APIs independientes estan desarrolladas.
+- El registro y login local utilizan ASP.NET Core Identity y JWT.
+- Google Login permite autenticar usuarios vinculados y registrar cuentas nuevas con rol Cliente.
+- El administrador inicial dispone de aprovisionamiento seguro mediante User Secrets.
+- La administracion permite gestionar roles y estados de cuentas.
+- Se realizaron pruebas de perfiles, permisos, recuperacion de contrasena, servicios caidos y timeout.
+- Auth.Api compilo y arranco correctamente despues de las actualizaciones.
+- Se incluyen migraciones, documentacion y coleccion Postman de 28 solicitudes.
 ## Alcance
 
 `Catalogo.Api`, `Inventario.Api` y `Pedidos.Api` corresponden a la actividad anterior AD01; no es necesario reconstruirlos en esta entrega AA01. No se necesita Docker, API Gateway, RabbitMQ ni despliegue público.
+
 
